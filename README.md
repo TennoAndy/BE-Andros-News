@@ -1,4 +1,4 @@
-# Northcoders News API
+# Town of Andros News Blog API
 
 ## Background
 
