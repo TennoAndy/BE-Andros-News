@@ -34,5 +34,17 @@ describe("/api/topics", () => {
           });
       });
     });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when invalid endpoint is given", () => {
+        return request(app)
+          .get("/api/topecs")
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual(
+              "Please enter a valid link. Go back and try again."
+            )
+          );
+      });
+    });
   });
 });
