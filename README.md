@@ -8,8 +8,6 @@ Your database will be PSQL, and you will interact with it using [node-postgres](
 
 ## Kanban
 
-### Link to your Trello Board here: https://trello.com/b/7yiHe1nI
-
 To keep track of the tasks involved in this project we're going to use a kanban board. Ensure that you work on one _ticket_ at time. You can click on the ticket to find out more information about what is required for the feature. A ticket is not considered complete unless both the happy path and errors response are handled. You can make use of the checklist on each ticket to keep track of the errors you want to handle. You can also make use of [error-handling.md](error-handling.md) to consider the error codes we may wish to respond with.
 
 **Please ensure you work through the tickets in numerical order.**
@@ -34,7 +32,7 @@ When pushing the branch to git hub ensure that you make reference to the branch 
 git push origin <branch name>
 ```
 
-From github you can make a pull request and share the link and ticket number via a pull request specific nchelp using the command `help pr`. A tutor will swing by to review your code. Ensure that you keep your trello up to date whilst you await the PR approval. Regular `help` will be available for when you need support.
+From github you can make a pull request and share the link and ticket number via a pull request specific help using the command `help pr`. A tutor will swing by to review your code. Ensure that you keep your trello up to date whilst you await the PR approval. Regular `help` will be available for when you need support.
 
 Once a pull request been accepted be sure to switch back to the main branch and pull down the updated changes.
 
