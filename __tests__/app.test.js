@@ -70,5 +70,23 @@ describe("/api/articles/:article_id", () => {
           });
       });
     });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when invalid article_id is given", () => {
+        return request(app)
+          .get("/api/articles/500")
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual(
+              "Please enter a valid Article ID. Go back and try again."
+            )
+          );
+      });
+      test("should respond with error 404 when invalid article_id is given", () => {
+        return request(app)
+          .get("/api/articles/sdax")
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+      });
+    });
   });
 });
