@@ -90,7 +90,7 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
-describe.only("/api/articles", () => {
+describe("/api/articles", () => {
   describe("GET", () => {
     describe("200", () => {
       test("should respond with array topic objects", () => {
