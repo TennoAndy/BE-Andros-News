@@ -1,9 +1,8 @@
-// exports.handlePqslErrors = (err, req, res, next) => {
-//   console.log(err);
-//   if (err.code === "23502" || err.code === "22P02") {
-//     res.status(400).send({ msg: err.msg });
-//   } else next(err);
-// };
+exports.handlePqslErrors = (err, req, res, next) => {
+  if (err.code === "23502" || err.code === "22P02") {
+    res.status(400).send({ msg: "Bad request!" });
+  } else next(err);
+};
 // exports.handleNotAuthorError = (err, req, res, next) => {
 //   if (err.code === 401) res.status(401).send({ msg: err.msg });
 // };

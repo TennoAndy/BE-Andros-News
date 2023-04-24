@@ -17,7 +17,9 @@ app.get("/api/articles/:article_id", getArticleById);
 
 app.all("/*", handleInvalidEndpoint);
 
-// app.use(handlePqslErrors);
+//to next ksekinaei apo edw kai katw.
+
+app.use(handlePqslErrors);
 // app.use(handleNotAuthorError);
 app.use(handleCustomErrors);
 
