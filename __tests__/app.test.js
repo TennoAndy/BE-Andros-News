@@ -90,3 +90,32 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
+describe("/api/articles", () => {
+  describe("GET", () => {
+    describe("200", () => {
+      test("should respond with array topic objects", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(12);
+            articles.forEach((article) => {
+              expect(article).toEqual(
+                expect.objectContaining({
+                  author: expect.any(String),
+                  title: expect.any(String),
+                  article_id: expect.any(Number),
+                  topic: expect.any(String),
+                  created_at: expect.any(String),
+                  votes: expect.any(Number),
+                  article_img_url: expect.any(String),
+                  comment_count: expect.any(Number),
+                })
+              );
+            });
+            expect(articles).toBeSortedBy("created_at", { descending: true });
+          });
+      });
+    });
+  });
+});
