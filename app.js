@@ -6,7 +6,10 @@ const {
   handleCustomErrors,
   handleInvalidEndpoint,
 } = require("./Controllers/errors-controllers");
-const { getArticleById } = require("./Controllers/articles-controllers");
+const {
+  getArticleById,
+  getArticles,
+} = require("./Controllers/articles-controllers");
 
 const app = express();
 app.use(express.json());
@@ -14,6 +17,8 @@ app.use(express.json());
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticleById);
+
+app.get("/api/articles", getArticles);
 
 app.all("/*", handleInvalidEndpoint);
 
