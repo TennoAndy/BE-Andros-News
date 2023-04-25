@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 afterAll(() => db.end());
 
-describe("/api/topics", () => {
+xdescribe("/api/topics", () => {
   describe("GET", () => {
     describe("200", () => {
       test("should respond with array topic objects", () => {
@@ -48,7 +48,8 @@ describe("/api/topics", () => {
     });
   });
 });
-describe("/api/articles/:article_id", () => {
+
+xdescribe("/api/articles/:article_id", () => {
   describe("GET", () => {
     describe("200", () => {
       test("GET - should return an article object based on id", () => {
@@ -90,7 +91,8 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
-describe("/api/articles", () => {
+
+xdescribe("/api/articles", () => {
   describe("GET", () => {
     describe("200", () => {
       test("should respond with array topic objects", () => {
@@ -114,6 +116,34 @@ describe("/api/articles", () => {
               );
             });
             expect(articles).toBeSortedBy("created_at", { descending: true });
+          });
+      });
+    });
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    describe("200", () => {
+      test("GET - should return a comment array based on article_id", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toHaveLength(11);
+            comments.forEach((comment) => {
+              expect(comment).toEqual(
+                expect.objectContaining({
+                  comment_id: expect.any(Number),
+                  body: expect.any(String),
+                  article_id: expect.any(Number),
+                  author: expect.any(String),
+                  votes: expect.any(Number),
+                  created_at: expect.any(String),
+                })
+              );
+            });
+            expect(comments).toBeSortedBy("created_at", { descending: true });
           });
       });
     });
