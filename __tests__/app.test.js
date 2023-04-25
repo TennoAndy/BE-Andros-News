@@ -48,6 +48,7 @@ describe("/api/topics", () => {
     });
   });
 });
+
 describe("/api/articles/:article_id", () => {
   describe("GET", () => {
     describe("200", () => {
@@ -90,6 +91,7 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
+
 describe("/api/articles", () => {
   describe("GET", () => {
     describe("200", () => {
@@ -115,6 +117,58 @@ describe("/api/articles", () => {
             });
             expect(articles).toBeSortedBy("created_at", { descending: true });
           });
+      });
+    });
+  });
+});
+
+describe("/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    describe("200", () => {
+      test("GET - should return a comment array based on article_id", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toHaveLength(11);
+            comments.forEach((comment) => {
+              expect(comment).toEqual(
+                expect.objectContaining({
+                  comment_id: expect.any(Number),
+                  body: expect.any(String),
+                  article_id: expect.any(Number),
+                  author: expect.any(String),
+                  votes: expect.any(Number),
+                  created_at: expect.any(String),
+                })
+              );
+            });
+            expect(comments).toBeSortedBy("created_at", { descending: true });
+          });
+      });
+    });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when invalid article_id is given", () => {
+        return request(app)
+          .get("/api/articles/500/comments")
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual(
+              "Please enter a valid Article ID. Go back and try again."
+            )
+          );
+      });
+    });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when invalid endpoint is given", () => {
+        return request(app)
+          .get("/api/articles/1/commentes")
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual(
+              "Please enter a valid link. Go back and try again."
+            )
+          );
       });
     });
   });
