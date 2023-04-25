@@ -9,7 +9,7 @@ beforeEach(() => {
 });
 afterAll(() => db.end());
 
-xdescribe("/api/topics", () => {
+describe("/api/topics", () => {
   describe("GET", () => {
     describe("200", () => {
       test("should respond with array topic objects", () => {
@@ -49,7 +49,7 @@ xdescribe("/api/topics", () => {
   });
 });
 
-xdescribe("/api/articles/:article_id", () => {
+describe("/api/articles/:article_id", () => {
   describe("GET", () => {
     describe("200", () => {
       test("GET - should return an article object based on id", () => {
@@ -92,7 +92,7 @@ xdescribe("/api/articles/:article_id", () => {
   });
 });
 
-xdescribe("/api/articles", () => {
+describe("/api/articles", () => {
   describe("GET", () => {
     describe("200", () => {
       test("should respond with array topic objects", () => {
@@ -145,6 +145,30 @@ describe("/api/articles/:article_id/comments", () => {
             });
             expect(comments).toBeSortedBy("created_at", { descending: true });
           });
+      });
+    });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when invalid article_id is given", () => {
+        return request(app)
+          .get("/api/articles/500/comments")
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual(
+              "Please enter a valid Article ID. Go back and try again."
+            )
+          );
+      });
+    });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when invalid endpoint is given", () => {
+        return request(app)
+          .get("/api/articles/1/commentes")
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual(
+              "Please enter a valid link. Go back and try again."
+            )
+          );
       });
     });
   });
