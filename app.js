@@ -13,6 +13,7 @@ const {
 
 const {
   getCommentsByArticleId,
+  postComment,
 } = require("./Controllers/comments-controllers");
 
 const app = express();
@@ -25,6 +26,8 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+
+app.post("/api/articles/:article_id/comments", postComment);
 
 app.all("/*", handleInvalidEndpoint);
 

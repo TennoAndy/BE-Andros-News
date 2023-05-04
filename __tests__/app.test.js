@@ -122,7 +122,7 @@ describe("/api/articles", () => {
   });
 });
 
-describe("/api/articles/:article_id/comments", () => {
+describe.only("/api/articles/:article_id/comments", () => {
   describe("GET", () => {
     describe("200", () => {
       test("GET - should return a comment array based on article_id", () => {
@@ -168,6 +168,59 @@ describe("/api/articles/:article_id/comments", () => {
             expect(msg).toEqual(
               "Please enter a valid link. Go back and try again."
             )
+          );
+      });
+    });
+  });
+  describe("POST", () => {
+    describe("201", () => {
+      test("POST should return an object with new posted comment", () => {
+        const postComment = {
+          author: "butter_bridge",
+          body: "Good Article.",
+        };
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send(postComment)
+          .expect(201)
+          .then(({ body: { newComment } }) => {
+            expect(newComment).toEqual({
+              comment_id: 19,
+              body: "Good Article.",
+              article_id: 1,
+              author: "butter_bridge",
+              votes: 0,
+              created_at: expect.any(String),
+            });
+          });
+      });
+    });
+    describe("ERROR 400 ", () => {
+      test("should respond with error 400 when user doesn't exist", () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send({ author: "Doesn't exist", body: "Good Article." })
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+      });
+      test("should respond with error 400 when empty object is given", () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("No comment submitted")
+          );
+      });
+    });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when invalid article_id is given", () => {
+        return request(app)
+          .post("/api/articles/500/comments")
+          .send({ author: "butter_bridge", body: "Good Article." })
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Article Not Found!")
           );
       });
     });

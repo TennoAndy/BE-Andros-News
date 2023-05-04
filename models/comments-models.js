@@ -27,3 +27,14 @@ exports.selectCommentsByArticleId = async (id) => {
 //       } else return rows[0];
 //     });
 // };
+
+exports.insertComment = async ({ author, body }, id) => {
+  if (!author || !body) {
+    return Promise.reject({ code: 400, msg: "No comment submitted" });
+  }
+  const { rows } = await db.query(
+    `INSERT INTO comments (article_id,author,body) VALUES ($1, $2, $3) RETURNING *`,
+    [id, author, body]
+  );
+  return rows[0];
+};

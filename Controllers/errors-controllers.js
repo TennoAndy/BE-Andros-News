@@ -1,5 +1,5 @@
 exports.handlePqslErrors = (err, req, res, next) => {
-  if (err.code === "23502" || err.code === "22P02") {
+  if (err.code === "23502" || err.code === "22P02" || err.code === "23503") {
     res.status(400).send({ msg: "Bad request!" });
   } else next(err);
 };
@@ -7,8 +7,8 @@ exports.handlePqslErrors = (err, req, res, next) => {
 //   if (err.code === 401) res.status(401).send({ msg: err.msg });
 // };
 exports.handleCustomErrors = (err, req, res, next) => {
-  if (err.code === 404) {
-    res.status(404).send({ msg: err.msg });
+  if (err.code === 404 || err.code === 400) {
+    res.status(err.code).send({ msg: err.msg });
   } else next(err);
 };
 
