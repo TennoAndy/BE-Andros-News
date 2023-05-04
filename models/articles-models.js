@@ -37,3 +37,12 @@ exports.selectArticles = async () => {
   );
   return rows;
 };
+exports.checkArticleExists = async (articleId) => {
+  const { rows } = await db.query(
+    `SELECT article_id FROM articles WHERE article_id=$1`,
+    [articleId]
+  );
+  if (!rows[0]) {
+    return Promise.reject({ code: 404, msg: "Article Not Found!" });
+  }
+};
