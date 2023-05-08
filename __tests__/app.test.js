@@ -3,6 +3,7 @@ const request = require("supertest");
 const app = require("../app");
 const data = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
+const articles = require("../db/data/test-data/articles");
 
 beforeEach(() => {
   return seed(data);
@@ -90,6 +91,50 @@ describe("/api/articles/:article_id", () => {
       });
     });
   });
+  describe("PATCH", () => {
+    describe("200", () => {
+      test("should update votes of specified article", () => {
+        const update = { votes: 101 };
+        return request(app)
+          .patch("/api/articles/1")
+          .send(update)
+          .expect(200)
+          .then(({ body: { updateArticle } }) => {
+            expect(updateArticle).toEqual({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-09T18:11:00.000Z",
+              votes: 201,
+              article_img_url:
+                "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            });
+          });
+      });
+    });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when invalid article_id is given", () => {
+        return request(app)
+          .patch("/api/articles/500")
+          .send({ votes: 201 })
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Article Not Found!")
+          );
+      });
+    });
+    describe("ERROR 400 ", () => {
+      test("should respond with error 400 when invalid body is given", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+      });
+    });
+  });
 });
 
 describe("/api/articles", () => {
@@ -122,7 +167,7 @@ describe("/api/articles", () => {
   });
 });
 
-describe.only("/api/articles/:article_id/comments", () => {
+describe("/api/articles/:article_id/comments", () => {
   describe("GET", () => {
     describe("200", () => {
       test("GET - should return a comment array based on article_id", () => {
