@@ -9,6 +9,7 @@ const {
 const {
   getArticleById,
   getArticles,
+  patchArticle,
 } = require("./Controllers/articles-controllers");
 
 const {
@@ -28,6 +29,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.patch("/api/articles/:article_id", patchArticle);
 
 app.all("/*", handleInvalidEndpoint);
 

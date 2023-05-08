@@ -46,3 +46,11 @@ exports.checkArticleExists = async (articleId) => {
     return Promise.reject({ code: 404, msg: "Article Not Found!" });
   }
 };
+
+exports.updatedArticle = async (updates, id) => {
+  const { rows } = await db.query(
+    `UPDATE articles SET votes=votes + $1 WHERE article_id=$2 RETURNING *`,
+    [updates.votes, id]
+  );
+  return rows[0];
+};
