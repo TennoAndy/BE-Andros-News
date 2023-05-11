@@ -276,9 +276,7 @@ describe("/api/comments/:comment_id", () => {
   describe("DELETE", () => {
     describe("204", () => {
       test("should delete a comment based on its id", () => {
-        return request(app)
-          .delete("/api/comments/1")
-          .expect(204)
+        return request(app).delete("/api/comments/1").expect(204);
       });
     });
   });
@@ -288,9 +286,7 @@ describe("/api/comments/:comment_id", () => {
         .delete("/api/comments/500")
         .expect(404)
         .then(({ body: { msg } }) =>
-          expect(msg).toEqual(
-            "Comment doesn't exist!"
-          )
+          expect(msg).toEqual("Comment doesn't exist!")
         );
     });
     test("should respond with error 404 when invalid comment_id is given", () => {
@@ -298,6 +294,58 @@ describe("/api/comments/:comment_id", () => {
         .delete("/api/comments/sdax")
         .expect(400)
         .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+    });
+  });
+});
+
+describe.only("/api/users", () => {
+  describe("GET", () => {
+    describe("200", () => {
+      test("should respond with array of users", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body: { users } }) => {
+            expect(users).toEqual([
+              {
+                username: "butter_bridge",
+                name: "jonny",
+                avatar_url:
+                  "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+              },
+              {
+                username: "icellusedkars",
+                name: "sam",
+                avatar_url:
+                  "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4",
+              },
+              {
+                username: "rogersop",
+                name: "paul",
+                avatar_url:
+                  "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4",
+              },
+              {
+                username: "lurker",
+                name: "do_nothing",
+                avatar_url:
+                  "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+              },
+            ]);
+          });
+      });
+    });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when invalid endpoint is given", () => {
+        return request(app)
+          .get("/api/usears")
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual(
+              "Please enter a valid link. Go back and try again."
+            )
+          );
+      });
     });
   });
 });
