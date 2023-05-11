@@ -1,7 +1,7 @@
 const express = require("express");
 const { getTopics } = require("./Controllers/topics-controllers");
 const {
-  handlePqslErrors,
+  handlePsqlErrors,
   handleNotAuthorError,
   handleCustomErrors,
   handleInvalidEndpoint,
@@ -15,6 +15,7 @@ const {
 const {
   getCommentsByArticleId,
   postComment,
+  deleteComment,
 } = require("./Controllers/comments-controllers");
 
 const app = express();
@@ -30,13 +31,15 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.post("/api/articles/:article_id/comments", postComment);
 
+app.delete("/api/comments/:comment_id", deleteComment);
+
 app.patch("/api/articles/:article_id", patchArticle);
 
 app.all("/*", handleInvalidEndpoint);
 
 //to next ksekinaei apo edw kai katw.
 
-app.use(handlePqslErrors);
+app.use(handlePsqlErrors);
 // app.use(handleNotAuthorError);
 app.use(handleCustomErrors);
 
