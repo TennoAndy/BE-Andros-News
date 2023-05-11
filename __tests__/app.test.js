@@ -271,3 +271,33 @@ describe("/api/articles/:article_id/comments", () => {
     });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    describe("204", () => {
+      test("should delete a comment based on its id", () => {
+        return request(app)
+          .delete("/api/comments/1")
+          .expect(204)
+      });
+    });
+  });
+  describe("ERROR 404 ", () => {
+    test("should respond with error 404 when invalid comment_id is given", () => {
+      return request(app)
+        .delete("/api/comments/500")
+        .expect(404)
+        .then(({ body: { msg } }) =>
+          expect(msg).toEqual(
+            "Comment doesn't exist!"
+          )
+        );
+    });
+    test("should respond with error 404 when invalid comment_id is given", () => {
+      return request(app)
+        .delete("/api/comments/sdax")
+        .expect(400)
+        .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+    });
+  });
+});

@@ -38,3 +38,15 @@ exports.insertComment = async ({ author, body }, id) => {
   );
   return rows[0];
 };
+
+exports.deleteCommentById = async (id) => {
+  const { rows } = await db.query(
+    `DELETE FROM comments WHERE comment_id=$1 RETURNING *`,
+    [id]
+  );
+  if (rows.length === 0)
+    return Promise.reject({
+      code: 404,
+      msg: "Comment doesn't exist!",
+    });
+};
