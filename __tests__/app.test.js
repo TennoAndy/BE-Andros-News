@@ -163,6 +163,50 @@ describe("/api/articles", () => {
             expect(articles).toBeSortedBy("created_at", { descending: true });
           });
       });
+      test("should respond with an article of given topic", () => {
+        return request(app)
+          .get("/api/articles?topic=cats")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            for (let article of articles) {
+              expect(article.topic).toEqual("cats");
+            }
+          });
+      });
+      test("should respond with articles in ascended order", () => {
+        return request(app)
+          .get("/api/articles?sort_by=votes&order=ASC")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toBeSortedBy("votes");
+          });
+      });
+    });
+    describe("400", () => {
+      test("should respond with error 400 when invalid order is given", () => {
+        return request(app)
+          .get("/api/articles?order=somethingRandom")
+          .expect(400)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual(
+              "Please enter valid order. Order should be ASC(ascending) or DESC(descending)"
+            )
+          );
+      });
+      test("should respond with error 400 when invalid topic is given", () => {
+        return request(app)
+          .get("/api/articles?topic=somethingRandom")
+          .expect(404)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Topic Not Found!"));
+      });
+      test("should respond with error 400 when invalid sort_by is given", () => {
+        return request(app)
+          .get("/api/articles?sort_by=somethingRandom")
+          .expect(400)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Please enter valid sort order!")
+          );
+      });
     });
   });
 });
@@ -298,7 +342,7 @@ describe("/api/comments/:comment_id", () => {
   });
 });
 
-describe.only("/api/users", () => {
+describe("/api/users", () => {
   describe("GET", () => {
     describe("200", () => {
       test("should respond with array of users", () => {
