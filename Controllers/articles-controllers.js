@@ -5,6 +5,8 @@ const {
   checkArticleExists,
 } = require("../models/articles-models");
 
+const { checkTopicExists } = require("../models/topics-models");
+
 // exports.getArticleById = (req, res, next) => {
 //   const articleId = req.params.article_id;
 //   selectArticleById(+articleId)
@@ -24,7 +26,11 @@ exports.getArticleById = async (req, res, next) => {
 
 exports.getArticles = async (req, res, next) => {
   try {
-    const articles = await selectArticles();
+    const { topic, sort_by, order } = req.query;
+    const [, articles] = await Promise.all([
+      checkTopicExists(topic),
+      selectArticles(topic, sort_by, order),
+    ]);
     res.status(200).send({ articles });
   } catch (err) {
     next(err);
