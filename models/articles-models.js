@@ -16,7 +16,7 @@ const format = require("pg-format");
 
 exports.selectArticleById = async (id) => {
   const { rows } = await db.query(
-    `SELECT * FROM articles WHERE article_id=$1`,
+    `SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`,
     [id]
   );
   if (rows.length === 0)
@@ -51,12 +51,7 @@ exports.selectArticles = async (
       msg: "Please enter valid order. Order should be ASC(ascending) or DESC(descending)",
     });
 
-  let query = `SELECT articles.article_id, 
-  articles.title, 
-  articles.topic, 
-  articles.author, 
-  articles.created_at, 
-  articles.votes, articles.article_img_url, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id`;
+  let query = `SELECT articles.*, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id`;
 
   const queryArr = [];
 
