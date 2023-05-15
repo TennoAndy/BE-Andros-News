@@ -2,6 +2,7 @@
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
   },
+
   "GET /api/topics": {
     "description": "serves an array of all topics",
     "queries": [],
@@ -9,9 +10,16 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles and a comment_count of all articles",
+    "queries": [
+      "author",
+      "topic",
+      "sort_by[title or topic or author or created_at or votes]",
+      "order[ASC or DESC]",
+      "created_at"
+    ],
     "exampleResponse": {
       "articles": [
         {
@@ -22,6 +30,111 @@
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
           "comment_count": 6
+        }
+      ]
+    }
+  },
+
+  "GET /api/articles/:article_id": {
+    "description": "serves an object of specified article based on article_id and a comment_count of this article",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 9,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "article_img_url": "link to an image",
+          "votes": 0,
+          "comment_count": 6
+        }
+      ]
+    }
+  },
+
+  "PATCH /api/articles/:article_id": {
+    "description": "serves an article object with new updated vote count",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 9,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 40,
+          "comment_count": 6
+        }
+      ]
+    }
+  },
+
+  "GET /api/articles/:article_id/comments": {
+    "description": "Serves an array of comment objects of specified article base on article_id",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 15,
+          "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          "votes": 16,
+          "author": "butter_bridge",
+          "article_id": 9,
+          "created_at": "2023-05-30T15:59:13.341Z,"
+        },
+        {
+          "comment_id": 18,
+          "body": "One piece will never end. Do we actually want it?",
+          "votes": 999,
+          "author": "Andros",
+          "article_id": 7,
+          "created_at": "2022-06-30T15:59:13.341Z"
+        }
+      ]
+    }
+  },
+
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a new comment to the specified article and serves an object with the new created comment",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 45,
+        "body": "What i'm going to do?",
+        "article_id": 2,
+        "author": "Andros",
+        "votes": 0,
+        "created_at": "2023-05-15T05:00:00.000Z"
+      }
+    }
+  },
+
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes the comment based on comment id",
+    "queries": [],
+    "expectedStatus": 204,
+    "exampleResponse": "does not send a response"
+  },
+
+  "GET /api/users": {
+    "description": "serves an array of the users as objects.",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "andros",
+          "name": "andy",
+          "avatar_url": "link to an image"
+        },
+        {
+          "username": "wolfric",
+          "name": "albus",
+          "avatar_url": "link to an image"
         }
       ]
     }
