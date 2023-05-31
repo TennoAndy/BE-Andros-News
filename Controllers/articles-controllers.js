@@ -1,12 +1,11 @@
 const {
   selectArticleById,
   selectArticles,
-  updatedArticle,
+  updateArticleById,
   checkArticleExists,
 } = require("../models/articles-models");
 
 const { checkTopicExists } = require("../models/topics-models");
-
 
 // exports.getArticleById = (req, res, next) => {
 //   const articleId = req.params.article_id;
@@ -18,7 +17,7 @@ const { checkTopicExists } = require("../models/topics-models");
 exports.getArticleById = async (req, res, next) => {
   try {
     const articleId = req.params.article_id;
-    const article = await selectArticleById(+articleId);
+    const article = await selectArticleById(articleId);
     res.status(200).send({ article });
   } catch (err) {
     next(err);
@@ -38,12 +37,12 @@ exports.getArticles = async (req, res, next) => {
   }
 };
 
-exports.patchArticle = async (req, res, next) => {
+exports.patchArticleById = async (req, res, next) => {
   try {
     const articleId = req.params.article_id;
     const [, updateArticle] = await Promise.all([
       checkArticleExists(articleId),
-      updatedArticle(req.body, +articleId),
+      updateArticleById(req.body, articleId),
     ]);
     res.status(200).send({ updateArticle });
   } catch (err) {
