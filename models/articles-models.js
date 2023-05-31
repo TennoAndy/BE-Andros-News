@@ -33,13 +33,7 @@ exports.selectArticles = async (
   sort_by = `created_at`,
   order = `DESC`
 ) => {
-  const acceptedSortBy = [
-    "title",
-    "topic",
-    "author",
-    "created_at",
-    "votes",
-  ];
+  const acceptedSortBy = ["title", "topic", "author", "created_at", "votes"];
   if (!acceptedSortBy.includes(sort_by))
     return Promise.reject({
       code: 400,
@@ -77,7 +71,7 @@ exports.checkArticleExists = async (articleId) => {
   }
 };
 
-exports.updatedArticle = async (updates, id) => {
+exports.updateArticleById = async (updates, id) => {
   const { rows } = await db.query(
     `UPDATE articles SET votes=votes + $1 WHERE article_id=$2 RETURNING *`,
     [updates.votes, id]

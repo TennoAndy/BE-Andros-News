@@ -24,7 +24,7 @@ exports.getCommentsByArticleId = async (req, res, next) => {
 //     .catch(next);
 // };
 
-exports.postComment = async (req, res, next) => {
+exports.postCommentByArticleId = async (req, res, next) => {
   try {
     const comment = req.body;
     const articleId = req.params.article_id;
@@ -38,7 +38,7 @@ exports.postComment = async (req, res, next) => {
   }
 };
 
-exports.deleteComment = async (req, res, next) => {
+exports.deleteCommentById = async (req, res, next) => {
   try {
     const deleteId = req.params.comment_id;
     const commentDeleted = await deleteCommentById(deleteId);
