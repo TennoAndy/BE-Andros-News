@@ -395,6 +395,34 @@ describe("/api/users", () => {
   });
 });
 
+describe("/api/users/:username", () => {
+  describe("GET", () => {
+    describe("200", () => {
+      test("should return a user object base on username", () => {
+        return request(app)
+          .get("/api/users/butter_bridge")
+          .expect(200)
+          .then(({ body: { user } }) => {
+            expect(user).toEqual({
+              username: "butter_bridge",
+              name: "jonny",
+              avatar_url:
+                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+            });
+          });
+      });
+    });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when username is valid but doesn't exist in database", () => {
+        return request(app)
+          .get("/api/users/validusername")
+          .expect(404)
+          .then(({ body: { msg } }) => expect(msg).toEqual("User Not Found!"));
+      });
+    });
+  });
+});
+
 describe("/api", () => {
   describe("GET", () => {
     describe("200", () => {
