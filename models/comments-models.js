@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const format = require("pg-format");
+
 
 exports.selectCommentsByArticleId = async (id) => {
   const { rows } = await db.query(
