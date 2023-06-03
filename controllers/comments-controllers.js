@@ -3,6 +3,7 @@ const {
   insertComment,
   deleteCommentById,
   checkCommentExists,
+  updateCommentById,
 } = require("../models/comments-models");
 const { checkArticleExists } = require("../models/articles-models");
 
@@ -43,6 +44,19 @@ exports.deleteCommentById = async (req, res, next) => {
     const deleteId = req.params.comment_id;
     const commentDeleted = await deleteCommentById(deleteId);
     res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.patchCommentById = async (req, res, next) => {
+  try {
+    const commentId = req.params.comment_id;
+    const [, updateComment] = await Promise.all([
+      checkCommentExists(commentId),
+      updateCommentById(req.body, commentId),
+    ]);
+    res.status(200).send({ updateComment });
   } catch (err) {
     next(err);
   }

@@ -22,7 +22,7 @@ exports.selectArticleById = async (id) => {
   if (rows.length === 0)
     return Promise.reject({
       code: 404,
-      msg: "Please enter a valid Article ID. Go back and try again.",
+      msg: "Article Not Found!",
     });
 
   return rows[0];
