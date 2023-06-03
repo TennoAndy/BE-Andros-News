@@ -226,6 +226,85 @@ describe("/api/articles", () => {
       });
     });
   });
+  describe("POST", () => {
+    describe("201", () => {
+      test("should return an object with a new article", () => {
+        const postArticle = {
+          author: "butter_bridge",
+          title: "How to paper",
+          body: "Info how paper is made",
+          topic: "paper",
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(postArticle)
+          .expect(201)
+          .then(({ body: { newArticle } }) => {
+            expect(newArticle).toEqual({
+              author: "butter_bridge",
+              title: "How to paper",
+              article_id: 13,
+              body: "Info how paper is made",
+              topic: "paper",
+              created_at: expect.any(String),
+              votes: 0,
+              article_img_url: expect.any(String),
+              comment_count: 0,
+            });
+          });
+      });
+    });
+    describe("ERROR 400 ", () => {
+      test("should respond with error 400 when empty object is given", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("No Article Submitted!")
+          );
+      });
+      test("should respond with error 400 when not all required properties are given", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "butter_bridge",
+            title: "",
+            body: "I'm a body",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("No Article Submitted!")
+          );
+      });
+      test("should respond with error 400 when user doesn't exist", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "Doesn't exist",
+            title: "How to paper",
+            body: "Info how paper is made",
+            topic: "paper",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+      });
+      test("should respond with error 400 when topic doesn't exist in topics table", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "butter_bridge",
+            title: "How to paper",
+            body: "Info how paper is made",
+            topic: "no such topic",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request!");
+          });
+      });
+    });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
@@ -254,21 +333,25 @@ describe("/api/articles/:article_id/comments", () => {
       });
     });
     describe("ERROR 404 ", () => {
-      test("should respond with error 404 when invalid article_id is given", () => {
+      test("should respond with error 404 when valid article_id is given but article doesn't exist in database", () => {
         return request(app)
           .get("/api/articles/500/comments")
           .expect(404)
           .then(({ body: { msg } }) =>
-            expect(msg).toEqual(
-              "Please enter a valid Article ID. Go back and try again."
-            )
+            expect(msg).toEqual("Article Not Found!")
           );
+      });
+      test("should respond with error 404 when invalid article_id 'not a number' is given ", () => {
+        return request(app)
+          .get("/api/articles/sdax")
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
       });
     });
     describe("ERROR 404 ", () => {
       test("should respond with error 404 when invalid endpoint is given", () => {
         return request(app)
-          .get("/api/articles/1/commentes")
+          .get("/api/articles/1/notvalidendpoint")
           .expect(404)
           .then(({ body: { msg } }) =>
             expect(msg).toEqual(
@@ -320,7 +403,7 @@ describe("/api/articles/:article_id/comments", () => {
       });
     });
     describe("ERROR 404 ", () => {
-      test("should respond with error 404 when invalid article_id is given", () => {
+      test("should respond with error 404 when valid article_id is given but article doesn't exist in database", () => {
         return request(app)
           .post("/api/articles/500/comments")
           .send({ author: "butter_bridge", body: "Good Article." })
@@ -328,6 +411,12 @@ describe("/api/articles/:article_id/comments", () => {
           .then(({ body: { msg } }) =>
             expect(msg).toEqual("Article Not Found!")
           );
+      });
+      test("should respond with error 404 when invalid article_id 'not a number' is given ", () => {
+        return request(app)
+          .get("/api/articles/sdax/comments")
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
       });
     });
   });

@@ -1,6 +1,5 @@
 const db = require("../db/connection");
 
-
 // exports.selectArticleById = (id) => {
 //   return db
 //     .query(`SELECT * FROM articles WHERE article_id=$1`, [id])
@@ -76,5 +75,18 @@ exports.updateArticleById = async (updates, id) => {
     `UPDATE articles SET votes=votes + $1 WHERE article_id=$2 RETURNING *`,
     [updates.votes, id]
   );
+  return rows[0];
+};
+
+exports.insertArticle = async ({ author, title, body, topic }) => {
+  if (!author || !title || !body || !topic) {
+    return Promise.reject({ code: 400, msg: "No Article Submitted!" });
+  }
+  const { rows } = await db.query(
+    `INSERT INTO articles (author,title, body, topic) VALUES ($1, $2, $3, $4) RETURNING *`,
+    [author, title, body, topic]
+  );
+  rows[0].comment_count = 0;
+
   return rows[0];
 };

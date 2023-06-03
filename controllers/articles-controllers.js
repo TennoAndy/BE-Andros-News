@@ -3,6 +3,7 @@ const {
   selectArticles,
   updateArticleById,
   checkArticleExists,
+  insertArticle,
 } = require("../models/articles-models");
 
 const { checkTopicExists } = require("../models/topics-models");
@@ -45,6 +46,16 @@ exports.patchArticleById = async (req, res, next) => {
       updateArticleById(req.body, articleId),
     ]);
     res.status(200).send({ updateArticle });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.postArticle = async (req, res, next) => {
+  try {
+    const article = req.body;
+    const newArticle = await insertArticle(article);
+    res.status(201).send({ newArticle });
   } catch (err) {
     next(err);
   }
