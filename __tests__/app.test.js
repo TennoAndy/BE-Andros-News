@@ -74,17 +74,15 @@ describe("/api/articles/:article_id", () => {
       });
     });
     describe("ERROR 404 ", () => {
-      test("should respond with error 404 when invalid article_id is given", () => {
+      test("should respond with error 404 when valid article_id is given but article doesn't exist", () => {
         return request(app)
           .get("/api/articles/500")
           .expect(404)
           .then(({ body: { msg } }) =>
-            expect(msg).toEqual(
-              "Please enter a valid Article ID. Go back and try again."
-            )
+            expect(msg).toEqual("Article Not Found!")
           );
       });
-      test("should respond with error 404 when invalid article_id is given", () => {
+      test("should respond with error 404 when invalid article_id 'not a number' is given ", () => {
         return request(app)
           .get("/api/articles/sdax")
           .expect(400)
@@ -114,9 +112,18 @@ describe("/api/articles/:article_id", () => {
             });
           });
       });
+      test("decrements votes if votes is a negative integer", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({ votes: -150 })
+          .expect(200)
+          .then(({ body: { updateArticle } }) => {
+            expect(updateArticle.votes).toBe(-50);
+          });
+      });
     });
     describe("ERROR 404 ", () => {
-      test("should respond with error 404 when invalid article_id is given", () => {
+      test("should respond with error 404 when valid article_id is given but article doesn't exist in database", () => {
         return request(app)
           .patch("/api/articles/500")
           .send({ votes: 201 })
@@ -130,6 +137,15 @@ describe("/api/articles/:article_id", () => {
       test("should respond with error 400 when invalid body is given", () => {
         return request(app)
           .patch("/api/articles/1")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+      });
+    });
+    describe("ERROR 400 ", () => {
+      test("should respond with error 400 when invalid not a number article id  is given", () => {
+        return request(app)
+          .patch("/api/articles/notanumber")
           .send({})
           .expect(400)
           .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
@@ -341,6 +357,65 @@ describe("/api/comments/:comment_id", () => {
         .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
     });
   });
+  describe("PATCH", () => {
+    describe("200", () => {
+      test("should update votes of specified comment", () => {
+        const update = { votes: 40 };
+        return request(app)
+          .patch("/api/comments/1")
+          .send(update)
+          .expect(200)
+          .then(({ body: { updateComment } }) => {
+            expect(updateComment).toEqual({
+              comment_id: 1,
+              body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+              votes: 56,
+              author: "butter_bridge",
+              article_id: 9,
+              created_at: expect.any(String),
+            });
+          });
+      });
+      test("decrements votes if votes is a negative integer", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ votes: -20 })
+          .expect(200)
+          .then(({ body: { updateComment } }) => {
+            expect(updateComment.votes).toBe(-4);
+          });
+      });
+    });
+    describe("ERROR 404 ", () => {
+      test("should respond with error 404 when valid comment_id is given but comment doesn't exist in database", () => {
+        return request(app)
+          .patch("/api/comments/500")
+          .send({ votes: 40 })
+          .expect(404)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Comment Not Found!")
+          );
+      });
+    });
+    describe("ERROR 400 ", () => {
+      test("should respond with error 400 when invalid body is given", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+      });
+    });
+    describe("ERROR 400 ", () => {
+      test("should respond with error 400 when invalid not a number comment id  is given", () => {
+        return request(app)
+          .patch("/api/comments/notanumber")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+      });
+    });
+  });
 });
 
 describe("/api/users", () => {
@@ -417,7 +492,11 @@ describe("/api/users/:username", () => {
         return request(app)
           .get("/api/users/validusername")
           .expect(404)
-          .then(({ body: { msg } }) => expect(msg).toEqual("User Not Found!"));
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual(
+              "User either doesn't exist or you don't have access to their profile"
+            )
+          );
       });
     });
   });
