@@ -48,6 +48,58 @@ describe("/api/topics", () => {
       });
     });
   });
+  describe("POST", () => {
+    describe("201", () => {
+      test("should return an object with a new topic", () => {
+        const postTopic = {
+          slug: "bananas",
+          description: "ba ba ba ba nana nana",
+        };
+        return request(app)
+          .post("/api/topics")
+          .send(postTopic)
+          .expect(201)
+          .then(({ body: { newTopic } }) => {
+            expect(newTopic).toEqual({
+              slug: "bananas",
+              description: "ba ba ba ba nana nana",
+            });
+          });
+      });
+    });
+    describe("ERROR 400 ", () => {
+      test("should respond with error 400 when empty object is given", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Missing Required Fields!")
+          );
+      });
+      test("should respond with error 400 when not all required properties are given", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({
+            slug: "",
+            descriptions: "ba ba ba ba nana nana",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Missing Required Fields!")
+          );
+      });
+      test("should respond with error 400 if topic already exists", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({ slug: "paper", description: "another paper topic" })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Topic Already Exists!");
+          });
+      });
+    });
+  });
 });
 
 describe("/api/articles/:article_id", () => {
@@ -86,7 +138,7 @@ describe("/api/articles/:article_id", () => {
         return request(app)
           .get("/api/articles/sdax")
           .expect(400)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
       });
     });
   });
@@ -139,7 +191,9 @@ describe("/api/articles/:article_id", () => {
           .patch("/api/articles/1")
           .send({})
           .expect(400)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Missing Required Fields!")
+          );
       });
     });
     describe("ERROR 400 ", () => {
@@ -148,7 +202,7 @@ describe("/api/articles/:article_id", () => {
           .patch("/api/articles/notanumber")
           .send({})
           .expect(400)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
       });
     });
   });
@@ -287,7 +341,7 @@ describe("/api/articles", () => {
             topic: "paper",
           })
           .expect(400)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
       });
       test("should respond with error 400 when topic doesn't exist in topics table", () => {
         return request(app)
@@ -300,7 +354,7 @@ describe("/api/articles", () => {
           })
           .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Bad request!");
+            expect(msg).toBe("Bad Request!");
           });
       });
     });
@@ -345,7 +399,7 @@ describe("/api/articles/:article_id/comments", () => {
         return request(app)
           .get("/api/articles/sdax")
           .expect(400)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
       });
     });
     describe("ERROR 404 ", () => {
@@ -390,7 +444,7 @@ describe("/api/articles/:article_id/comments", () => {
           .post("/api/articles/1/comments")
           .send({ author: "Doesn't exist", body: "Good Article." })
           .expect(400)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
       });
       test("should respond with error 400 when empty object is given", () => {
         return request(app)
@@ -416,7 +470,7 @@ describe("/api/articles/:article_id/comments", () => {
         return request(app)
           .get("/api/articles/sdax/comments")
           .expect(400)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
       });
     });
   });
@@ -443,7 +497,7 @@ describe("/api/comments/:comment_id", () => {
       return request(app)
         .delete("/api/comments/sdax")
         .expect(400)
-        .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+        .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
     });
   });
   describe("PATCH", () => {
@@ -492,7 +546,9 @@ describe("/api/comments/:comment_id", () => {
           .patch("/api/comments/1")
           .send({})
           .expect(400)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Missing Required Fields!")
+          );
       });
     });
     describe("ERROR 400 ", () => {
@@ -501,7 +557,7 @@ describe("/api/comments/:comment_id", () => {
           .patch("/api/comments/notanumber")
           .send({})
           .expect(400)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Bad request!"));
+          .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
       });
     });
   });

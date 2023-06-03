@@ -87,6 +87,5 @@ exports.insertArticle = async ({ author, title, body, topic }) => {
     [author, title, body, topic]
   );
   rows[0].comment_count = 0;
-
   return rows[0];
 };
