@@ -206,6 +206,39 @@ describe("/api/articles/:article_id", () => {
       });
     });
   });
+  describe("DELETE", () => {
+    describe("204", () => {
+      test("should delete an article based on its id", () => {
+        return request(app)
+          .delete("/api/articles/1")
+          .expect(204)
+          .then(() => {
+            return request(app)
+              .get("/api/articles")
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                expect(articles.length).toBe(11);
+              });
+          });
+      });
+    });
+  });
+  describe("ERROR 404 ", () => {
+    test("should respond with error 404 when valid article id is given but article doesn't exist in database", () => {
+      return request(app)
+        .delete("/api/articles/500")
+        .expect(404)
+        .then(({ body: { msg } }) =>
+          expect(msg).toEqual("Article doesn't exist!")
+        );
+    });
+    test("should respond with error 404 when invalid 'not a number' comment_id is given", () => {
+      return request(app)
+        .delete("/api/articles/sdax")
+        .expect(400)
+        .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
+    });
+  });
 });
 
 describe("/api/articles", () => {
