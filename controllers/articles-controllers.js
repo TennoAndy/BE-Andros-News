@@ -4,6 +4,7 @@ const {
   updateArticleById,
   checkArticleExists,
   insertArticle,
+  deleteArticleById,
 } = require("../models/articles-models");
 
 const { checkTopicExists } = require("../models/topics-models");
@@ -56,6 +57,16 @@ exports.postArticle = async (req, res, next) => {
     const article = req.body;
     const newArticle = await insertArticle(article);
     res.status(201).send({ newArticle });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteArticleById = async (req, res, next) => {
+  try {
+    const deleteId = req.params.article_id;
+    const deleteArticle = await deleteArticleById(deleteId);
+    res.sendStatus(204);
   } catch (err) {
     next(err);
   }

@@ -89,3 +89,16 @@ exports.insertArticle = async ({ author, title, body, topic }) => {
   rows[0].comment_count = 0;
   return rows[0];
 };
+
+exports.deleteArticleById = async (id) => {
+  const { rows } = await db.query(
+    `DELETE FROM articles WHERE article_id=$1 RETURNING *`,
+    [id]
+  );
+  if (rows.length === 0)
+    return Promise.reject({
+      code: 404,
+      msg: "Article doesn't exist!",
+    });
+  return rows[0];
+};
