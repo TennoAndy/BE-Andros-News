@@ -1,7 +1,7 @@
 {
-  "name": "be-nc-news",
+  "name": "be-andros-news",
   "version": "1.0.0",
-  "description": "bc-nc-news",
+  "description": "bc-andros-news",
   "main": "listen.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/northcoders/be-nc-news.git"
+    "url": "git+https://github.com/TennoAndros/be-Andros-news-main"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/northcoders/be-nc-news/issues"
   },
-  "homepage": "https://github.com/northcoders/be-nc-news#readme",
+  "homepage": "https://github.com/TennoAndros/be-Andros-news-main#readme",
   "devDependencies": {
     "husky": "^8.0.2",
     "jest": "^27.5.1",
