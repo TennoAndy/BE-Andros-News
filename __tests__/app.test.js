@@ -392,7 +392,7 @@ describe("/api/articles", () => {
         .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe(
-            "Please provide valid values.Limit or p cannot be greater than the total number of articles!"
+            "Please provide valid values. Limit or p cannot be greater than the total number of articles!"
           );
         });
     });
@@ -651,7 +651,9 @@ describe("/api/articles/:article_id/comments", () => {
         .post("/api/articles/1/comments")
         .send({})
         .expect(400)
-        .then(({ body: { msg } }) => expect(msg).toEqual("No comment submitted"));
+        .then(({ body: { msg } }) =>
+          expect(msg).toEqual("No comment submitted")
+        );
     });
   });
   describe("STATUS ERROR 404 ", () => {
@@ -757,7 +759,7 @@ describe("/api/comments/:comment_id", () => {
       test("should respond with error 400 when invalid not a number comment id  is given", () => {
         return request(app)
           .patch("/api/comments/notNumber")
-          .send({votes: 10})
+          .send({ votes: 10 })
           .expect(400)
           .then(({ body: { msg } }) => expect(msg).toEqual("Bad Request!"));
       });

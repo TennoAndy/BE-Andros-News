@@ -1,23 +1,28 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 exports.selectArticleById = async (id) => {
-  const { rows } = await db.query(
-    `SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`,
-    [id]
+  const query = format(
+    `SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = %L GROUP BY articles.article_id`,
+    id
   );
-  if (rows.length === 0)
+
+  const { rows } = await db.query(query);
+
+  if (rows.length === 0) {
     return Promise.reject({
       code: 404,
       msg: "Article Not Found!",
     });
+  }
 
   return rows[0];
 };
 
 exports.selectArticles = async (
   topic,
-  sort_by = `created_at`,
-  order = `DESC`,
+  sort_by = "created_at",
+  order = "DESC",
   limit = 10,
   p = 1
 ) => {
@@ -29,7 +34,7 @@ exports.selectArticles = async (
       msg: "Please enter a valid sort order!",
     });
 
-  if (order.toLowerCase() !== `desc` && order.toLowerCase() !== `asc`)
+  if (order.toLowerCase() !== "desc" && order.toLowerCase() !== "asc")
     return Promise.reject({
       code: 400,
       msg: "Please enter a valid order. Order should be ASC(ascending) or DESC(descending)",
@@ -49,31 +54,36 @@ exports.selectArticles = async (
     });
   }
 
-  let query = `SELECT articles.*, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id`;
+  let query =
+    `SELECT articles.*, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id`;
   let offset = (p - 1) * limit;
 
-  const queryArr = [offset];
+  limit= limit=="0"? `ALL` : limit
 
-  const limitValue = limit == 0 ? "ALL" : limit;
+  const queryArr = [sort_by, order.toLowerCase(),limit, offset];
 
   if (topic) {
-    query += ` WHERE articles.topic=$2 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ${limitValue} OFFSET $1`;
-    queryArr.push(topic);
+    query +=
+      ` WHERE articles.topic=%L GROUP BY articles.article_id ORDER BY %I %s LIMIT %s OFFSET %L`;
+    queryArr.unshift(topic);
   } else {
-    query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ${limitValue} OFFSET $1`;
+    query += ` GROUP BY articles.article_id ORDER BY %I %s LIMIT %s OFFSET %L`;
+   
   }
 
   const limitlessArr = [];
 
-  let limitlessQuery = `SELECT * FROM articles`;
+  let limitlessQuery = "SELECT * FROM articles";
 
   if (topic) {
-    limitlessQuery += ` WHERE articles.topic=$1`;
+    limitlessQuery += " WHERE articles.topic=$1";
     limitlessArr.push(topic);
   }
 
+  const formattedQuery = format(query, ...queryArr);
+ 
   const [articlesResult, limitlessArticlesResult] = await Promise.all([
-    db.query(query, queryArr),
+    db.query(formattedQuery),
     db.query(limitlessQuery, limitlessArr),
   ]);
 
@@ -86,7 +96,7 @@ exports.selectArticles = async (
   ) {
     return Promise.reject({
       code: 404,
-      msg: "Please provide valid values.Limit or p cannot be greater than the total number of articles!",
+      msg: "Please provide valid values. Limit or p cannot be greater than the total number of articles!",
     });
   }
   return { articles, total_count };
