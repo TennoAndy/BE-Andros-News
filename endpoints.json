@@ -110,6 +110,12 @@
     }
   },
 
+  "DELETE /api/articles/:article_id": {
+    "description": "Deletes the article from the database and all of its comments base on article id",
+    "queries": [],
+    "exampleResponse": "does not send a response"
+  },
+
   "GET /api/articles/:article_id/comments": {
     "description": "Serves an array of comment objects of specified article base on article_id",
     "queries": [],

@@ -28,12 +28,12 @@ exports.getArticleById = async (req, res, next) => {
 
 exports.getArticles = async (req, res, next) => {
   try {
-    const { topic, sort_by, order } = req.query;
-    const [, articles] = await Promise.all([
+    const { topic, sort_by, order, limit, p } = req.query;
+    const [, { articles, total_count }] = await Promise.all([
       checkTopicExists(topic),
-      selectArticles(topic, sort_by, order),
+      selectArticles(topic, sort_by, order, limit, p),
     ]);
-    res.status(200).send({ articles });
+    res.status(200).send({ articles, total_count });
   } catch (err) {
     next(err);
   }

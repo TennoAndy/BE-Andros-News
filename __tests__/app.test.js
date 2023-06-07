@@ -216,8 +216,8 @@ describe("/api/articles/:article_id", () => {
             return request(app)
               .get("/api/articles")
               .expect(200)
-              .then(({ body: { articles } }) => {
-                expect(articles.length).toBe(11);
+              .then(({ body: { total_count } }) => {
+                expect(total_count).toBe(11);
               });
           });
       });
@@ -249,7 +249,7 @@ describe("/api/articles", () => {
           .get("/api/articles")
           .expect(200)
           .then(({ body: { articles } }) => {
-            expect(articles).toHaveLength(12);
+            expect(articles).toHaveLength(10);
             articles.forEach((article) => {
               expect(article).toEqual(
                 expect.objectContaining({
@@ -267,7 +267,7 @@ describe("/api/articles", () => {
             expect(articles).toBeSortedBy("created_at", { descending: true });
           });
       });
-      test("should respond with an article of given topic", () => {
+      test("should respond with articles of given topic", () => {
         return request(app)
           .get("/api/articles?topic=cats")
           .expect(200)
@@ -279,10 +279,50 @@ describe("/api/articles", () => {
       });
       test("should respond with articles in ascended order", () => {
         return request(app)
-          .get("/api/articles?sort_by=votes&order=ASC")
+          .get("/api/articles?sort_by=votes&order=asc")
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles).toBeSortedBy("votes");
+          });
+      });
+      test("should respond with limit of 10 articles which is the default value", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(10);
+          });
+      });
+      test("should respond with articles of the limit provided", () => {
+        return request(app)
+          .get("/api/articles?limit=3")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(3);
+          });
+      });
+      test("should respond with all articles if limit is 0 ", () => {
+        return request(app)
+          .get("/api/articles?limit=0")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(12);
+          });
+      });
+      test("should respond with the number of pages given", () => {
+        return request(app)
+          .get("/api/articles?p=1")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(10);
+          });
+      });
+      test("should contain a total count property", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { total_count } }) => {
+            expect(total_count).toBe(12);
           });
       });
     });
@@ -293,24 +333,70 @@ describe("/api/articles", () => {
           .expect(400)
           .then(({ body: { msg } }) =>
             expect(msg).toEqual(
-              "Please enter valid order. Order should be ASC(ascending) or DESC(descending)"
+              "Please enter a valid order. Order should be ASC(ascending) or DESC(descending)"
             )
           );
-      });
-      test("should respond with error 400 when invalid topic is given", () => {
-        return request(app)
-          .get("/api/articles?topic=somethingRandom")
-          .expect(404)
-          .then(({ body: { msg } }) => expect(msg).toEqual("Topic Not Found!"));
       });
       test("should respond with error 400 when invalid sort_by is given", () => {
         return request(app)
           .get("/api/articles?sort_by=somethingRandom")
           .expect(400)
           .then(({ body: { msg } }) =>
-            expect(msg).toEqual("Please enter valid sort order!")
+            expect(msg).toEqual("Please enter a valid sort order!")
           );
       });
+      test("should respond with error 400 if limit query isn't a number", () => {
+        return request(app)
+          .get("/api/articles?limit=notNumber")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe(
+              "Please enter a valid limit. Limit should be a number!"
+            );
+          });
+      });
+      test("should respond with error 400 if p query isn't a number", () => {
+        return request(app)
+          .get("/api/articles?p=notNumber")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Please enter a valid p. P should be a number!");
+          });
+      });
+      test("should respond with limit and p queries must be positive integers if given negative integers", () => {
+        return request(app)
+          .get("/api/articles?limit=-5")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Limit and p must be positive numbers!");
+          })
+          .then(() => {
+            return request(app)
+              .get("/api/articles?p=-5")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Limit and p must be positive numbers!");
+              });
+          });
+      });
+    });
+  });
+  describe("404", () => {
+    test("should respond with error 404 if topic doesn't exist in database", () => {
+      return request(app)
+        .get("/api/articles?topic=somethingRandom")
+        .expect(404)
+        .then(({ body: { msg } }) => expect(msg).toEqual("Topic Not Found!"));
+    });
+    test("should respond with error 404 if limit or p query number exceeds the total number of articles in our database", () => {
+      return request(app)
+        .get("/api/articles?p=45")
+        .expect(404)
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe(
+            "Please provide valid values.Limit or p cannot be greater than the total number of articles!"
+          );
+        });
     });
   });
   describe("POST", () => {
@@ -688,17 +774,23 @@ describe("/api", () => {
           .get("/api")
           .expect(200)
           .then(({ body }) => {
+            expect(typeof body).toBe("object");
             expect(body).toEqual(
               expect.objectContaining({
                 "GET /api": expect.any(Object),
                 "GET /api/topics": expect.any(Object),
+                "POST /api/topics": expect.any(Object),
                 "GET /api/articles": expect.any(Object),
+                "POST /api/articles": expect.any(Object),
                 "GET /api/articles/:article_id": expect.any(Object),
                 "PATCH /api/articles/:article_id": expect.any(Object),
+                "DELETE /api/articles/:article_id": expect.any(Object),
                 "GET /api/articles/:article_id/comments": expect.any(Object),
                 "POST /api/articles/:article_id/comments": expect.any(Object),
-                "DELETE /api/comments/:comment_id": expect.any(Object),
                 "GET /api/users": expect.any(Object),
+                "GET /api/users/:username": expect.any(Object),
+                "PATCH /api/comments/:comment_id": expect.any(Object),
+                "DELETE /api/comments/:comment_id": expect.any(Object),
               })
             );
           });

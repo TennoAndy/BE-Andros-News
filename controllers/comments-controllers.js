@@ -19,7 +19,6 @@ exports.getCommentsByArticleId = async (req, res, next) => {
 
 // exports.getCommentsByArticleId = (req, res, next) => {
 //   const articleId = req.params.article_id;
-//   console.log(articleId, "EDWWWWWWWWWWWWWWWW");
 //   selectCommentsByArticleId(+articleId)
 //     .then((comments) => res.status(200).send({ comments }))
 //     .catch(next);
