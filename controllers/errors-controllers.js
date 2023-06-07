@@ -5,6 +5,8 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     res.status(400).send({ msg: "Missing Required Fields!" });
   } else if (err.code === "23505") {
     res.status(400).send({ msg: "Topic Already Exists!" });
+  } else if (err.code === "2201W" || err.code === "2201X") {
+    res.status(400).send({ msg: "Limit and p must be positive numbers!" });
   } else next(err);
 };
 // exports.handleNotAuthorError = (err, req, res, next) => {

@@ -1,18 +1,28 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "Serves up a json representation of all the available endpoints of the api"
   },
 
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "Serves an array of all topics",
     "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
 
+  "POST /api/topics": {
+    "description": "Adds a new topic to the database and responds with an object with the newly added created topic",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [
+        { "slug": "newTopic", "description": "new topic description!" }
+      ]
+    }
+  },
+
   "GET /api/articles": {
-    "description": "serves an array of all articles and a comment_count of all articles",
+    "description": "Serves an array of all articles and a comment_count of all articles",
     "queries": [
       "author",
       "topic",
@@ -31,12 +41,38 @@
           "votes": 0,
           "comment_count": 6
         }
+      ],
+      "total_count": 1
+    }
+  },
+
+  "POST /api/articles": {
+    "description": "Post a new article and responds with an object containing the new added article",
+    "queries": [],
+    "exampleRequest": {
+      "author": "anAuthor",
+      "title": "Some title",
+      "body": "A body.",
+      "topic": "manga"
+    },
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 44,
+          "author": "anAuthor",
+          "title": "Some title",
+          "body": "A body",
+          "created_at": "2021-01-10T05:00:00.000Z",
+          "topic": "manga",
+          "votes": 0,
+          "comment_count": 0
+        }
       ]
     }
   },
 
   "GET /api/articles/:article_id": {
-    "description": "serves an object of specified article based on article_id and a comment_count of this article",
+    "description": "Serves an object of specified article based on article_id and a comment_count of this article",
     "queries": [],
     "exampleResponse": {
       "articles": [
@@ -56,7 +92,7 @@
   },
 
   "PATCH /api/articles/:article_id": {
-    "description": "serves an article object with new updated vote count",
+    "description": "Serves an article object with new updated vote count",
     "queries": [],
     "exampleResponse": {
       "articles": [
@@ -72,6 +108,12 @@
         }
       ]
     }
+  },
+
+  "DELETE /api/articles/:article_id": {
+    "description": "Deletes the article from the database and all of its comments base on article id",
+    "queries": [],
+    "exampleResponse": "does not send a response"
   },
 
   "GET /api/articles/:article_id/comments": {
@@ -100,7 +142,7 @@
   },
 
   "POST /api/articles/:article_id/comments": {
-    "description": "posts a new comment to the specified article and serves an object with the new created comment",
+    "description": "Posts a new comment to the specified article and serves an object with the new created comment",
     "queries": [],
     "exampleResponse": {
       "comment": {
@@ -114,15 +156,29 @@
     }
   },
 
-  "DELETE /api/comments/:comment_id": {
-    "description": "deletes the comment based on comment id",
+  "PATCH /api/comments/:comment_id": {
+    "description": "Serves a comment object with new updated vote count",
     "queries": [],
     "expectedStatus": 204,
+    "exampleRequest": { "inc_votes": -1 },
+    "exampleResponse": {
+      "comment_id": 55,
+      "article_id": 2,
+      "created_at": "2021-01-10T05:00:00.000Z",
+      "author": "niceGuy52",
+      "votes": -1,
+      "body": "not a great article.."
+    }
+  },
+
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes the comment based on comment id",
+    "queries": [],
     "exampleResponse": "does not send a response"
   },
 
   "GET /api/users": {
-    "description": "serves an array of the users as objects.",
+    "description": "Serves an array of the users as objects.",
     "queries": [],
     "exampleResponse": {
       "users": [
@@ -135,6 +191,20 @@
           "username": "wolfric",
           "name": "albus",
           "avatar_url": "link to an image"
+        }
+      ]
+    }
+  },
+
+  "GET /api/users/:username": {
+    "description": "Serves a user object matching the given username",
+    "queries": [],
+    "exampleResponse": {
+      "user": [
+        {
+          "username": "aUserName",
+          "name": "name",
+          "avatar_url": "link to an avatar"
         }
       ]
     }

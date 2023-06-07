@@ -30,35 +30,115 @@ exports.selectArticleById = async (id) => {
 exports.selectArticles = async (
   topic,
   sort_by = `created_at`,
-  order = `DESC`
+  order = `DESC`,
+  limit = 10,
+  p = 1
 ) => {
   const acceptedSortBy = ["title", "topic", "author", "created_at", "votes"];
+
   if (!acceptedSortBy.includes(sort_by))
     return Promise.reject({
       code: 400,
-      msg: "Please enter valid sort order!",
+      msg: "Please enter a valid sort order!",
     });
-  if (order !== `DESC` && order !== `ASC`)
+
+  if (order.toLowerCase() !== `desc` && order.toLowerCase() !== `asc`)
     return Promise.reject({
       code: 400,
-      msg: "Please enter valid order. Order should be ASC(ascending) or DESC(descending)",
+      msg: "Please enter a valid order. Order should be ASC(ascending) or DESC(descending)",
     });
 
-  let query = `SELECT articles.*, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id`;
-
-  const queryArr = [];
-
-  if (topic) {
-    query += ` WHERE articles.topic=$1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
-    queryArr.push(topic);
-  } else {
-    query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order}`;
-    // queryArr.push(sort_by, order);
+  if (Number.isNaN(Number(limit))) {
+    return Promise.reject({
+      code: 400,
+      msg: "Please enter a valid limit. Limit should be a number!",
+    });
   }
 
-  const { rows } = await db.query(query, queryArr);
-  return rows;
+  if (Number.isNaN(Number(p))) {
+    return Promise.reject({
+      code: 400,
+      msg: "Please enter a valid p. P should be a number!",
+    });
+  }
+
+  let query = `SELECT articles.*, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id`;
+  let offset = (p - 1) * limit;
+
+  const queryArr = [offset];
+
+  const limitValue = limit == 0 ? "ALL" : limit;
+
+  if (topic) {
+    query += ` WHERE articles.topic=$2 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ${limitValue} OFFSET $1`;
+    queryArr.push(topic);
+  } else {
+    query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ${limitValue} OFFSET $1`;
+  }
+
+  const limitlessArr = [];
+
+  let limitlessQuery = `SELECT * FROM articles`;
+
+  if (topic) {
+    limitlessQuery += ` WHERE articles.topic=$1`;
+    limitlessArr.push(topic);
+  }
+
+  const [articlesResult, limitlessArticlesResult] = await Promise.all([
+    db.query(query, queryArr),
+    db.query(limitlessQuery, limitlessArr),
+  ]);
+
+  const { rows: articles } = articlesResult;
+  const { rows: limitlessArticles } = limitlessArticlesResult;
+  const total_count = limitlessArticles.length;
+  if (
+    Math.ceil(total_count / limit) > 0 &&
+    p > Math.ceil(total_count / limit)
+  ) {
+    return Promise.reject({
+      code: 404,
+      msg: "Please provide valid values.Limit or p cannot be greater than the total number of articles!",
+    });
+  }
+  return { articles, total_count };
 };
+
+// if (topic) {
+//   if (limit === 0 || limit === "0") {
+//     query += ` WHERE articles.topic=$1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ALL OFFSET $2`;
+//     queryArr.unshift(topic);
+//   } else {
+//     query += ` WHERE articles.topic=$1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT $2 OFFSET $3`;
+//     queryArr.unshift(topic, limit);
+//   }
+// } else {
+//   if (limit === 0 || limit === "0") {
+//     query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ALL OFFSET $1`;
+//   } else {
+//     query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT $1 OFFSET $2`;
+//     queryArr.unshift(limit);
+//   }
+// }
+
+// if (topic && (limit === 0 || limit === "0")) {
+//   query += ` WHERE articles.topic=$1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ALL OFFSET $2`;
+//   queryArr.unshift(topic);
+// } else if (topic) {
+//   query += ` WHERE articles.topic=$1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT $2 OFFSET $3`;
+//   queryArr.unshift(topic, limit);
+// } else if (limit === 0 || limit === "0") {
+//   query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ALL OFFSET $1`;
+// } else {
+//   query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT $1 OFFSET $2`;
+//   queryArr.unshift(limit);
+// }
+// const { rows: articles } = await db.query(query, queryArr);
+// const { rows: limitlessArticles } = await db.query(
+//   limitlessQuery,
+//   limitlessArr
+// );
 
 exports.checkArticleExists = async (articleId) => {
   const { rows } = await db.query(
