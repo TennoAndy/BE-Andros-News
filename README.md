@@ -67,11 +67,12 @@ This repo was created using:
 
 **-Production dependencies-**
 
-| Package            | Version   | Usage                                |
-| :----------------- | :-------- | :----------------------------------- |
-| <sub>dotenv</sub>  | `^16.0.0` | _Handles environment variable files_ |
-| <sub>express</sub> | `^4.18.2` | _Routes API requests_                |
-| <sub>pg</sub>      | `^8.7.3`  | _Queries PostgreSQL database_        |
+| Package              | Version   | Usage                                         |
+| :------------------- | :-------- | :-------------------------------------------- |
+| <sub>dotenv</sub>    | `^16.0.0` | _Handles environment variable files_          |
+| <sub>express</sub>   | `^4.18.2` | _Routes API requests_                         |
+| <sub>pg-format</sub> | `^1.0.4`  | _Formats PostgreSQL to prevent SQL injection_ |
+| <sub>pg</sub>        | `^8.7.3`  | _Queries PostgreSQL database_                 |
 
 **-Development dependencies-**
 
@@ -81,7 +82,6 @@ This repo was created using:
 | <sub>jest</sub>          | `^27.5.1` | _Provides framework for testing functionality_        |
 | <sub>jest-extended</sub> | `^2.0.0`  | _Adds additional jest testing identifiers_            |
 | <sub>jest-sorted</sub>   | `^1.0.14` | _Adds sort testing for jest_                          |
-| <sub>pg-format</sub>     | `^1.0.4`  | _Formats PostgreSQL to prevent SQL injection_         |
 | <sub>supertest</sub>     | `^6.3.3`  | _Adds simplified web request testing_                 |
 
 ### 3. Seed local databases
