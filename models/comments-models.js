@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 exports.selectCommentsByArticleId = async (id, limit = 10, p = 1) => {
   if (Number.isNaN(Number(limit))) {
@@ -15,16 +16,19 @@ exports.selectCommentsByArticleId = async (id, limit = 10, p = 1) => {
     });
   }
 
-  const limitValue = limit == 0 ? "ALL" : limit;
+  let offset = (p - 1) * limit;
+ 
+  limit = limit == 0 ? `ALL` : limit;
 
-  let query = `SELECT * FROM comments WHERE article_id=$1 ORDER BY created_at DESC LIMIT ${limitValue} OFFSET $2`;
+  const queryArr = [id, limit, offset];
+
+  let query = `SELECT * FROM comments WHERE article_id=%L ORDER BY created_at DESC LIMIT %s OFFSET %L`;
   let limitlessQuery = `SELECT * FROM comments WHERE article_id=$1`;
 
-  let offset = (p - 1) * limit;
-  const queryArr = [id, offset];
+  const formattedQuery = format(query, ...queryArr);
 
   const [commentResult, limitlessQueryResult] = await Promise.all([
-    db.query(query, queryArr),
+    db.query(formattedQuery),
     db.query(limitlessQuery, [id]),
   ]);
 
