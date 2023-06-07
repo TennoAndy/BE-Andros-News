@@ -6,7 +6,7 @@
 
 Live version can be found here [hosted here](https://androsnews.onrender.com/api) using [Render](https://render.com/)
 
-**_It might take some time for the server to "wake-up"_**
+**_It might take some time for the server to "wake-up"._**
 
 ---
 
@@ -46,7 +46,7 @@ This project is a Node.js, Express application using a RESTful API and MVC archi
 
 ---
 
-## 🛠️ How to clone repo, install dependencies, seed local databases and run tests.
+## 🛠️ How to clone repo, install dependencies, seed local databases and run tests
 
 ### 1. Clone the repo
 
@@ -87,16 +87,16 @@ This repo was created using:
 ### 3. Seed local databases
 
 In order to seed the local database with both the development and test databases you need to run a script.
-The command is: `npm run setup-dbs`
-Then to populate them with placeholder data run: `npm run seed`
+The command is: `npm run setup-dbs` .
+Then to populate them with placeholder data run: `npm run seed` .
 
 ### 4. Run tests
 
-The script command to run the tests is: `npm t`
+The script command to run the tests is: `npm t` .
 
 ---
 
-## 🗒️ Creating the environment variables.
+## 🗒️ Creating the environment variables
 
 To connect in database locally you will need to create two files in your root directory:
 
@@ -104,9 +104,9 @@ To connect in database locally you will need to create two files in your root di
 - .env.test
 
 Both of which will need to include PGDATABASE=<database_name_here>
-Database name can be found in `./db/seeds/setup.sql`. You can amend the name of your database with something of your own choice.
+Database name can be found in `./db/seeds/setup.sql` . You can amend the name of your database with something of your own choice.
 
-**_THIS IS VITAL FOR CONNECTING THE TWO DATABASES LOCALLY_**
+**_THIS IS VITAL FOR CONNECTING THE TWO DATABASES LOCALLY._**
 
 ---
 
@@ -118,4 +118,4 @@ The project was created using the listed versions of Node, PostgreSQL and npm:
 - [PostgreSQL](https://www.postgresql.org/) (version 15.2)
 - [npm](https://www.npmjs.com/) (version 9.5)
 
-Might work with other versions but they haven't been tested.
+It might work with other versions but they haven't been tested.
