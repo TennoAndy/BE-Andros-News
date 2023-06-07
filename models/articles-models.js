@@ -1,18 +1,5 @@
 const db = require("../db/connection");
 
-// exports.selectArticleById = (id) => {
-//   return db
-//     .query(`SELECT * FROM articles WHERE article_id=$1`, [id])
-//     .then(({ rows }) => {
-//       if (rows.length === 0) {
-//         return Promise.reject({
-//           code: 404,
-//           msg: "Please enter a valid Article ID. Go back and try again.",
-//         });
-//       } else return rows[0];
-//     });
-// };
-
 exports.selectArticleById = async (id) => {
   const { rows } = await db.query(
     `SELECT articles.*, COUNT(comment_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`,
@@ -104,41 +91,6 @@ exports.selectArticles = async (
   }
   return { articles, total_count };
 };
-
-// if (topic) {
-//   if (limit === 0 || limit === "0") {
-//     query += ` WHERE articles.topic=$1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ALL OFFSET $2`;
-//     queryArr.unshift(topic);
-//   } else {
-//     query += ` WHERE articles.topic=$1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT $2 OFFSET $3`;
-//     queryArr.unshift(topic, limit);
-//   }
-// } else {
-//   if (limit === 0 || limit === "0") {
-//     query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ALL OFFSET $1`;
-//   } else {
-//     query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT $1 OFFSET $2`;
-//     queryArr.unshift(limit);
-//   }
-// }
-
-// if (topic && (limit === 0 || limit === "0")) {
-//   query += ` WHERE articles.topic=$1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ALL OFFSET $2`;
-//   queryArr.unshift(topic);
-// } else if (topic) {
-//   query += ` WHERE articles.topic=$1 GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT $2 OFFSET $3`;
-//   queryArr.unshift(topic, limit);
-// } else if (limit === 0 || limit === "0") {
-//   query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT ALL OFFSET $1`;
-// } else {
-//   query += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order.toLowerCase()} LIMIT $1 OFFSET $2`;
-//   queryArr.unshift(limit);
-// }
-// const { rows: articles } = await db.query(query, queryArr);
-// const { rows: limitlessArticles } = await db.query(
-//   limitlessQuery,
-//   limitlessArr
-// );
 
 exports.checkArticleExists = async (articleId) => {
   const { rows } = await db.query(

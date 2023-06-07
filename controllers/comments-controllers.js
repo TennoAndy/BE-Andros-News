@@ -9,20 +9,17 @@ const { checkArticleExists } = require("../models/articles-models");
 
 exports.getCommentsByArticleId = async (req, res, next) => {
   try {
+    const { limit, p } = req.query;
     const articleId = req.params.article_id;
-    const comments = await selectCommentsByArticleId(+articleId);
-    res.status(200).send({ comments });
+    const [, { comments, total_count }] = await Promise.all([
+      checkArticleExists(articleId),
+      selectCommentsByArticleId(articleId, limit, p),
+    ]);
+    res.status(200).send({ comments, total_count });
   } catch (err) {
     next(err);
   }
 };
-
-// exports.getCommentsByArticleId = (req, res, next) => {
-//   const articleId = req.params.article_id;
-//   selectCommentsByArticleId(+articleId)
-//     .then((comments) => res.status(200).send({ comments }))
-//     .catch(next);
-// };
 
 exports.postCommentByArticleId = async (req, res, next) => {
   try {
@@ -51,10 +48,8 @@ exports.deleteCommentById = async (req, res, next) => {
 exports.patchCommentById = async (req, res, next) => {
   try {
     const commentId = req.params.comment_id;
-    const [, updateComment] = await Promise.all([
-      checkCommentExists(commentId),
-      updateCommentById(req.body, commentId),
-    ]);
+    const update = req.body.votes;
+    const updateComment = await updateCommentById(update, commentId);
     res.status(200).send({ updateComment });
   } catch (err) {
     next(err);
