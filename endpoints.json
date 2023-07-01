@@ -198,6 +198,18 @@
     }
   },
 
+  "POST /api/users": {
+    "description": "Posts a new user and serves an object with the new created user",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "luffy",
+        "name": "monkey D",
+        "avatar_url": "link to an image"
+      }
+    }
+  },
+
   "GET /api/users/:username": {
     "description": "Serves a user object matching the given username",
     "queries": [],

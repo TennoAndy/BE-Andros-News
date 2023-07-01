@@ -13,7 +13,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 //   if (err.code === 401) res.status(401).send({ msg: err.msg });
 // };
 exports.handleCustomErrors = (err, req, res, next) => {
-  if (err.code === 404 || err.code === 400) {
+  if (err.code === 404 || err.code === 400 || err.code === 409) {
     res.status(err.code).send({ msg: err.msg });
   } else next(err);
 };

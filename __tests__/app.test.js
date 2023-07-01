@@ -817,6 +817,63 @@ describe("/api/users", () => {
       });
     });
   });
+  describe("POST", () => {
+    describe("STATUS 201", () => {
+      test("should return an object with a new user", () => {
+        const postUser = {
+          username: "guessWho",
+          name: "someone",
+          avatar_url:
+            "https://images.unsplash.com/photo-1687913161653-7cddb0ba09b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1OHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+        };
+        return request(app)
+          .post("/api/users")
+          .send(postUser)
+          .expect(201)
+          .then(({ body: { newUser } }) => {
+            expect(newUser).toEqual({
+              username: "guessWho",
+              name: "someone",
+              avatar_url:
+                "https://images.unsplash.com/photo-1687913161653-7cddb0ba09b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1OHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+            });
+          });
+      });
+    });
+    describe("STATUS ERROR 400 ", () => {
+      test("should respond with error 400 when empty object is given", () => {
+        return request(app)
+          .post("/api/users")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Missing Required Fields!")
+          );
+      });
+      test("should respond with error 400 when not all required properties are given", () => {
+        return request(app)
+          .post("/api/users")
+          .send({
+            username: "",
+            name: "ba ba ba ba nana nana",
+            avatar_url: "",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) =>
+            expect(msg).toEqual("Missing Required Fields!")
+          );
+      });
+      test("should respond with error 400 if user already exists", () => {
+        return request(app)
+          .post("/api/users")
+          .send({ username: "butter_bridge", name: "jonny", avatar_url: "" })
+          .expect(409)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("User Already Exists!");
+          });
+      });
+    });
+  });
 });
 
 describe("/api/users/:username", () => {
@@ -873,6 +930,7 @@ describe("/api", () => {
                 "GET /api/articles/:article_id/comments": expect.any(Object),
                 "POST /api/articles/:article_id/comments": expect.any(Object),
                 "GET /api/users": expect.any(Object),
+                "POST /api/users": expect.any(Object),
                 "GET /api/users/:username": expect.any(Object),
                 "PATCH /api/comments/:comment_id": expect.any(Object),
                 "DELETE /api/comments/:comment_id": expect.any(Object),
