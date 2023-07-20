@@ -26,13 +26,12 @@ exports.getUserByUsername = async (req, res, next) => {
 
 exports.postUser = async (req, res, next) => {
   try {
-    const userObj = req.body; 
-    const [, newUser] = await Promise.all([
-      checkUserExists(userObj.username), 
-      insertUser(userObj),
-    ]);
+    const userObj = req.body;
+    const userExists = await checkUserExists(userObj.username);
+    const newUser = !userExists && (await insertUser(userObj));
     res.status(201).send({ newUser });
   } catch (err) {
     next(err);
   }
 };
+
