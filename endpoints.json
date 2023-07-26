@@ -55,7 +55,8 @@
       "author": "anAuthor",
       "title": "Some title",
       "body": "A body.",
-      "topic": "manga"
+      "topic": "manga",
+      "article_img_url": "link to an image"
     },
     "exampleResponse": {
       "articles": [
@@ -66,6 +67,7 @@
           "body": "A body",
           "created_at": "2021-01-10T05:00:00.000Z",
           "topic": "manga",
+          "article_img_url": "link to an image",
           "votes": 0,
           "comment_count": 0
         }
@@ -120,7 +122,7 @@
 
   "GET /api/articles/:article_id/comments": {
     "description": "Serves an array of comment objects of specified article base on article_id",
-    "queries": ["limit","p"],
+    "queries": ["limit", "p"],
     "exampleResponse": {
       "comments": [
         [

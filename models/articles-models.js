@@ -54,21 +54,18 @@ exports.selectArticles = async (
     });
   }
 
-  let query =
-    `SELECT articles.*, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id`;
+  let query = `SELECT articles.*, COUNT(comments.article_id)::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id`;
   let offset = (p - 1) * limit;
 
-  limit= limit=="0"? `ALL` : limit
+  limit = limit == "0" ? `ALL` : limit;
 
-  const queryArr = [sort_by, order.toLowerCase(),limit, offset];
+  const queryArr = [sort_by, order.toLowerCase(), limit, offset];
 
   if (topic) {
-    query +=
-      ` WHERE articles.topic=%L GROUP BY articles.article_id ORDER BY %I %s LIMIT %s OFFSET %L`;
+    query += ` WHERE articles.topic=%L GROUP BY articles.article_id ORDER BY %I %s LIMIT %s OFFSET %L`;
     queryArr.unshift(topic);
   } else {
     query += ` GROUP BY articles.article_id ORDER BY %I %s LIMIT %s OFFSET %L`;
-   
   }
 
   const limitlessArr = [];
@@ -81,7 +78,7 @@ exports.selectArticles = async (
   }
 
   const formattedQuery = format(query, ...queryArr);
- 
+
   const [articlesResult, limitlessArticlesResult] = await Promise.all([
     db.query(formattedQuery),
     db.query(limitlessQuery, limitlessArr),
@@ -120,13 +117,19 @@ exports.updateArticleById = async (updates, id) => {
   return rows[0];
 };
 
-exports.insertArticle = async ({ author, title, body, topic }) => {
+exports.insertArticle = async ({
+  author,
+  title,
+  body,
+  topic,
+  article_img_url,
+}) => {
   if (!author || !title || !body || !topic) {
     return Promise.reject({ code: 400, msg: "No Article Submitted!" });
   }
   const { rows } = await db.query(
-    `INSERT INTO articles (author,title, body, topic) VALUES ($1, $2, $3, $4) RETURNING *`,
-    [author, title, body, topic]
+    `INSERT INTO articles (author,title, body, topic,article_img_url) VALUES ($1, $2, $3, $4,$5) RETURNING *`,
+    [author, title, body, topic, article_img_url]
   );
   rows[0].comment_count = 0;
   return rows[0];

@@ -405,6 +405,7 @@ describe("/api/articles", () => {
           title: "How to paper",
           body: "Info how paper is made",
           topic: "paper",
+          article_img_url: "img link",
         };
         return request(app)
           .post("/api/articles")
