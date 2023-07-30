@@ -49,13 +49,13 @@ exports.selectCommentsByArticleId = async (id, limit = 10, p = 1) => {
   return { comments, total_count };
 };
 
-exports.insertComment = async ({ author, body }, id) => {
+exports.insertComment = async ({ author, body }, articleId) => {
   if (!author || !body) {
     return Promise.reject({ code: 400, msg: "No comment submitted" });
   }
   const { rows } = await db.query(
     `INSERT INTO comments (article_id,author,body) VALUES ($1, $2, $3) RETURNING *`,
-    [id, author, body]
+    [articleId, author, body]
   );
   return rows[0];
 };
