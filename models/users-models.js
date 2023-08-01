@@ -29,7 +29,7 @@ exports.insertUser = async ({ username, name, avatar_url }) => {
   return rows[0];
 };
 
-//should not be used cause users references articles and comments and on delete cascades.
+//should not be used cause articles and comments references users and on delete cascades.
 exports.deleteUserByUsername = async (username) => {
   const { rows } = await db.query(
     `DELETE FROM users WHERE username=$1 RETURNING *`,
