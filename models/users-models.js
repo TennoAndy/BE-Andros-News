@@ -19,7 +19,7 @@ exports.selectUserByUsername = async (username) => {
 };
 
 exports.insertUser = async ({ username, name, avatar_url }) => {
-  if (!username || !name) {
+  if (!username || !name || !avatar_url) {
     return Promise.reject({ code: 400, msg: "Missing Required Fields!" });
   }
   const { rows } = await db.query(
@@ -27,6 +27,19 @@ exports.insertUser = async ({ username, name, avatar_url }) => {
     [username, name, avatar_url]
   );
   return rows[0];
+};
+
+//should not be used cause users references articles and comments and on delete cascades.
+exports.deleteUserByUsername = async (username) => {
+  const { rows } = await db.query(
+    `DELETE FROM users WHERE username=$1 RETURNING *`,
+    [username]
+  );
+  if (rows.length === 0)
+    return Promise.reject({
+      code: 404,
+      msg: "User doesn't exist!",
+    });
 };
 
 exports.checkUserExists = async (username) => {

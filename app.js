@@ -16,7 +16,6 @@ app.use("/api", apiRouter);
 
 app.all("/*", handleInvalidEndpoint);
 
-//to next ksekinaei apo edw kai katw.
 
 app.use(handlePsqlErrors);
 // app.use(handleNotAuthorError);

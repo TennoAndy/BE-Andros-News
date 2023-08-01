@@ -3,6 +3,7 @@ const {
   selectUserByUsername,
   insertUser,
   checkUserExists,
+  deleteUserByUsername,
 } = require("../models/users-models");
 
 exports.getUsers = async (req, res, next) => {
@@ -35,3 +36,12 @@ exports.postUser = async (req, res, next) => {
   }
 };
 
+exports.deleteUserByUsername = async (req, res, next) => {
+  try {
+    const deleteUsername = req.params.username;
+    const deleteUser = await deleteUserByUsername(deleteUsername);
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+};

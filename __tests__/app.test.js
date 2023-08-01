@@ -907,6 +907,25 @@ describe("/api/users/:username", () => {
       });
     });
   });
+  describe("DELETE", () => {
+    describe("204", () => {
+      test("should delete a user based on its username", () => {
+        return request(app).delete("/api/users/butter_bridge").expect(204);
+      });
+    });
+  });
+  describe("STATUS ERROR 404 ", () => {
+    test("should respond with error 404 when username is valid but doesn't exist in database", () => {
+      return request(app)
+        .get("/api/users/validusername")
+        .expect(404)
+        .then(({ body: { msg } }) =>
+          expect(msg).toEqual(
+            "User either doesn't exist or you don't have access to their profile"
+          )
+        );
+    });
+  });
 });
 
 describe("/api", () => {
