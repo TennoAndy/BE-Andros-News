@@ -23,7 +23,7 @@ exports.insertUser = async ({ username, name, avatar_url }) => {
     return Promise.reject({ code: 400, msg: "Missing Required Fields!" });
   }
   const { rows } = await db.query(
-    `INSERT INTO users (username, name, avatar_url) VALUES ($1, $2,$3) RETURNING *`,
+    `INSERT INTO users (username, name, avatar_url) VALUES ($1, $2, $3) RETURNING *`,
     [username, name, avatar_url]
   );
   return rows[0];
