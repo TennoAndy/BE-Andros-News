@@ -10,6 +10,40 @@ beforeEach(() => {
 });
 afterAll(() => db.end());
 
+describe("/api", () => {
+  describe("GET", () => {
+    describe("STATUS 200", () => {
+      test("should respond with a json object listing all endpoints", () => {
+        return request(app)
+          .get("/api")
+          .expect(200)
+          .then(({ body }) => {
+            expect(typeof body).toBe("object");
+            expect(body).toEqual(
+              expect.objectContaining({
+                "GET /api": expect.any(Object),
+                "GET /api/topics": expect.any(Object),
+                "POST /api/topics": expect.any(Object),
+                "GET /api/articles": expect.any(Object),
+                "POST /api/articles": expect.any(Object),
+                "GET /api/articles/:article_id": expect.any(Object),
+                "PATCH /api/articles/:article_id": expect.any(Object),
+                "DELETE /api/articles/:article_id": expect.any(Object),
+                "GET /api/articles/:article_id/comments": expect.any(Object),
+                "POST /api/articles/:article_id/comments": expect.any(Object),
+                "GET /api/users": expect.any(Object),
+                "POST /api/users": expect.any(Object),
+                "GET /api/users/:username": expect.any(Object),
+                "PATCH /api/comments/:comment_id": expect.any(Object),
+                "DELETE /api/comments/:comment_id": expect.any(Object),
+              })
+            );
+          });
+      });
+    });
+  });
+});
+
 describe("/api/topics", () => {
   describe("GET", () => {
     describe("STATUS 200", () => {
@@ -932,40 +966,6 @@ describe("/api/users/:username", () => {
             "User either doesn't exist or you don't have access to their profile"
           )
         );
-    });
-  });
-});
-
-describe("/api", () => {
-  describe("GET", () => {
-    describe("STATUS 200", () => {
-      test("should respond with a json object listing all endpoints", () => {
-        return request(app)
-          .get("/api")
-          .expect(200)
-          .then(({ body }) => {
-            expect(typeof body).toBe("object");
-            expect(body).toEqual(
-              expect.objectContaining({
-                "GET /api": expect.any(Object),
-                "GET /api/topics": expect.any(Object),
-                "POST /api/topics": expect.any(Object),
-                "GET /api/articles": expect.any(Object),
-                "POST /api/articles": expect.any(Object),
-                "GET /api/articles/:article_id": expect.any(Object),
-                "PATCH /api/articles/:article_id": expect.any(Object),
-                "DELETE /api/articles/:article_id": expect.any(Object),
-                "GET /api/articles/:article_id/comments": expect.any(Object),
-                "POST /api/articles/:article_id/comments": expect.any(Object),
-                "GET /api/users": expect.any(Object),
-                "POST /api/users": expect.any(Object),
-                "GET /api/users/:username": expect.any(Object),
-                "PATCH /api/comments/:comment_id": expect.any(Object),
-                "DELETE /api/comments/:comment_id": expect.any(Object),
-              })
-            );
-          });
-      });
     });
   });
 });

@@ -26,7 +26,7 @@
     "queries": [
       "author",
       "topic",
-      "sort_by[title or topic or author or created_at or votes]",
+      "sort_by[title or topic or author or created_at or votes or comment_count]",
       "order[ASC or DESC]",
       "created_at"
     ],
