@@ -1,4 +1,4 @@
-# 📖 Town of Andros News API
+# 📖 Andros Muggle News API
 
 ---
 
