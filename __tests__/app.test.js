@@ -283,6 +283,14 @@ describe("/api/articles", () => {
             expect(articles).toBeSortedBy("votes");
           });
       });
+      test("should respond with articles that have most comments", () => {
+        return request(app)
+          .get("/api/articles?sort_by=comment_count&order=asc")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toBeSortedBy("comment_count");
+          });
+      });
       test("should respond with limit of 10 articles which is the default value", () => {
         return request(app)
           .get("/api/articles")

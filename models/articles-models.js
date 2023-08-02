@@ -26,7 +26,7 @@ exports.selectArticles = async (
   limit = 10,
   p = 1
 ) => {
-  const acceptedSortBy = ["title", "topic", "author", "created_at", "votes"];
+  const acceptedSortBy = ["title", "topic", "author", "created_at", "votes", "comment_count"];
 
   if (!acceptedSortBy.includes(sort_by))
     return Promise.reject({
