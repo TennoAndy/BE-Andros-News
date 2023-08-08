@@ -38,7 +38,7 @@ This project is a Node.js, Express application using a RESTful API and MVC archi
 
 - `DELETE /api/comments/:comment_id` ➡️ DELETE a specific comment using its comment_id as parameter.
 
-- `PATCH /api/comments/:comment_id` ➡️← PATCH a specific comment by changing its vote count (upvote/downvote).
+- `PATCH /api/comments/:comment_id` ➡️ PATCH a specific comment by changing its vote count (upvote/downvote).
 
 - `GET /api/users` ➡️ GET a list of the registered users.
 
