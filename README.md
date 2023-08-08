@@ -42,7 +42,7 @@ This project is a Node.js, Express application using a RESTful API and MVC archi
 
 - `GET /api/users` ➡️ GET a list of the registered users.
 
-- `POST /api/users` ➡️ Post a new user.
+- `POST /api/users` ➡️ POST a new user.
 
 - `GET /api/users/:username` ➡️ GET a specific user using a username parameter.
 
