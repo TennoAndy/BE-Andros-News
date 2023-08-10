@@ -75,6 +75,7 @@ This repo was created using:
 | <sub>express</sub>   | `^4.18.2` | _Routes API requests_                         |
 | <sub>pg-format</sub> | `^1.0.4`  | _Formats PostgreSQL to prevent SQL injection_ |
 | <sub>pg</sub>        | `^8.7.3`  | _Queries PostgreSQL database_                 |
+| <sub>cors</sub>      | `2.8.5`   | _Cross-origin resource sharing_               |
 
 **-Development dependencies-**
 
