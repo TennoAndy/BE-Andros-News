@@ -4,7 +4,7 @@
 
 ## 🔗 link to Hosted version
 
-Live version can be found here [hosted here](https://androsnews.onrender.com/api) using [Render](https://render.com/)
+Live version can be found hosted [here](https://androsnews.onrender.com/api) using [Render](https://render.com/)
 
 **_It might take some time for the server to "wake-up"._**
 
