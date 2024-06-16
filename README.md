@@ -1,10 +1,10 @@
-# 📖 Town of Andros News API
+# 📖 Andros Muggle News API
 
 ---
 
 ## 🔗 link to Hosted version
 
-Live version can be found here [hosted here](https://androsnews.onrender.com/api) using [Render](https://render.com/)
+Live version can be found hosted [here](https://androsnews.onrender.com/api) using [Render](https://render.com/)
 
 **_It might take some time for the server to "wake-up"._**
 
@@ -38,11 +38,11 @@ This project is a Node.js, Express application using a RESTful API and MVC archi
 
 - `DELETE /api/comments/:comment_id` ➡️ DELETE a specific comment using its comment_id as parameter.
 
-- `PATCH /api/comments/:comment_id` ➡️← PATCH a specific comment by changing its vote count (upvote/downvote).
+- `PATCH /api/comments/:comment_id` ➡️ PATCH a specific comment by changing its vote count (upvote/downvote).
 
 - `GET /api/users` ➡️ GET a list of the registered users.
 
-- `POST /api/users` ➡️ Post a new user.
+- `POST /api/users` ➡️ POST a new user.
 
 - `GET /api/users/:username` ➡️ GET a specific user using a username parameter.
 
@@ -75,6 +75,7 @@ This repo was created using:
 | <sub>express</sub>   | `^4.18.2` | _Routes API requests_                         |
 | <sub>pg-format</sub> | `^1.0.4`  | _Formats PostgreSQL to prevent SQL injection_ |
 | <sub>pg</sub>        | `^8.7.3`  | _Queries PostgreSQL database_                 |
+| <sub>cors</sub>      | `^2.8.5`   | _Cross-origin resource sharing_              |
 
 **-Development dependencies-**
 
