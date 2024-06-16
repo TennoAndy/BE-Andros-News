@@ -5,7 +5,7 @@ exports.selectTopics = () => {
 };
 
 exports.checkTopicExists = async (topic) => {
-  //check if user hasn't given a topic query
+  //check if user hasn't given an existing topic query
   if (!topic) return Promise.resolve;
   const { rows } = await db.query(`SELECT * FROM topics WHERE slug=$1`, [
     topic,
