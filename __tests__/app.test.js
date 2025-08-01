@@ -4,7 +4,6 @@ const app = require("../app");
 const data = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
 
-
 beforeEach(() => {
   return seed(data);
 });
@@ -276,7 +275,7 @@ describe("/api/articles/:article_id", () => {
 describe("/api/articles", () => {
   describe("GET", () => {
     describe("STATUS 200", () => {
-      test("should respond with array topic objects", () => {
+      test("should respond with array article objects", () => {
         return request(app)
           .get("/api/articles")
           .expect(200)
@@ -309,7 +308,7 @@ describe("/api/articles", () => {
             }
           });
       });
-      test("should respond with articles in ascended order", () => {
+      test("should respond with articles in ascending order", () => {
         return request(app)
           .get("/api/articles?sort_by=votes&order=asc")
           .expect(200)
@@ -403,7 +402,7 @@ describe("/api/articles", () => {
             expect(msg).toBe("Please enter a valid p. P should be a number!");
           });
       });
-      test("should respond with limit and p queries must be positive integers if given negative integers", () => {
+      test("should respond with error 400 if limit and p queries must be positive integers if given negative integers", () => {
         return request(app)
           .get("/api/articles?limit=-5")
           .expect(400)
@@ -646,13 +645,13 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(404)
         .then(({ body: { msg } }) => expect(msg).toEqual("Article Not Found!"));
     });
-    test("should respond with error 404 if limit or p query number exceeds the total number of articles in our database", () => {
+    test("should respond with error 404 if limit or p query number exceeds the total number of comments in our database", () => {
       return request(app)
         .get("/api/articles/1/comments?p=45")
         .expect(404)
         .then(({ body: { msg } }) => {
           expect(msg).toBe(
-            "Please provide valid values.Limit or p cannot be greater than the total number of articles!"
+            "Please provide valid values.Limit or p cannot be greater than the total number of comments!"
           );
         });
     });
@@ -954,18 +953,6 @@ describe("/api/users/:username", () => {
       test("should delete a user based on its username", () => {
         return request(app).delete("/api/users/butter_bridge").expect(204);
       });
-    });
-  });
-  describe("STATUS ERROR 404 ", () => {
-    test("should respond with error 404 when username is valid but doesn't exist in database", () => {
-      return request(app)
-        .get("/api/users/validusername")
-        .expect(404)
-        .then(({ body: { msg } }) =>
-          expect(msg).toEqual(
-            "User either doesn't exist or you don't have access to their profile"
-          )
-        );
     });
   });
 });

@@ -42,7 +42,7 @@ exports.selectCommentsByArticleId = async (id, limit = 10, p = 1) => {
   ) {
     return Promise.reject({
       code: 404,
-      msg: "Please provide valid values.Limit or p cannot be greater than the total number of articles!",
+      msg: "Please provide valid values.Limit or p cannot be greater than the total number of comments!",
     });
   }
 
